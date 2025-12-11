@@ -446,18 +446,24 @@ whitenoise>=6.6,<7.0
 If the app grows significantly:
 
 ```
-SCALE UP PATH:
+SCALE UP PATH (Recommended: All Google Cloud for HIPAA):
 ─────────────────────────────────────────────────────────────────
 
-Current (MVP)              Scale (1000+ users)        Enterprise
-─────────────              ───────────────────        ──────────
+Current (MVP)              Scale (1000+ users)        Enterprise/HIPAA
+─────────────              ───────────────────        ────────────────
 
-Netlify Free        →      Netlify Pro           →   AWS CloudFront
-Railway Starter     →      Railway Pro           →   AWS ECS/EKS
-Railway Postgres    →      Railway Pro           →   AWS RDS
-Upstash Free        →      Upstash Pro           →   AWS ElastiCache
-Cloudinary Free     →      Cloudinary Plus       →   AWS S3 + MediaConvert
+Netlify Free        →      Netlify Pro           →   Firebase Hosting
+Railway Starter     →      Railway Pro           →   Google Cloud Run
+Railway Postgres    →      Railway Pro           →   Google Cloud SQL
+Upstash Free        →      Upstash Pro           →   Google Memorystore
+Cloudinary Free     →      Cloudinary Plus       →   Google Cloud Storage
 ```
+
+**Why Google Cloud for Enterprise/HIPAA?**
+- One BAA covers all services
+- Cloud Run is as easy as Railway
+- Cloud SQL uses same PostgreSQL
+- All services integrated & on one bill
 
 The current stack allows easy migration without major rewrites.
 
@@ -469,41 +475,68 @@ Since AWFM handles Protected Health Information (PHI), here's the migration path
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│                    MVP → HIPAA-COMPLIANT                                     │
+│                    MVP → HIPAA-COMPLIANT (All Google Cloud)                  │
 └─────────────────────────────────────────────────────────────────────────────┘
 
-CURRENT (MVP)                         HIPAA-COMPLIANT
-─────────────                         ───────────────
+CURRENT (MVP)                         HIPAA-COMPLIANT (Google Cloud)
+─────────────                         ──────────────────────────────
 
-Netlify (no BAA)              →       Vercel Enterprise (BAA)
-Railway (no BAA)              →       Google Cloud Run (BAA)
-Railway Postgres              →       Google Cloud SQL (BAA)
-Cloudinary (BAA unclear)      →       AWS S3 (BAA)
-OpenAI (no BAA standard)      →       Azure OpenAI (BAA)
+Netlify (no BAA)              →       Firebase Hosting (BAA included)
+Railway (no BAA)              →       Google Cloud Run (BAA included) ⭐
+Railway Postgres              →       Google Cloud SQL (BAA included) ⭐
+Cloudinary (BAA unclear)      →       Google Cloud Storage (BAA included) ⭐
+OpenAI (no BAA standard)      →       Vertex AI or Azure OpenAI (BAA)
 SendGrid Free                 →       SendGrid Enterprise (BAA)
 
-Cost: ~$15-150/mo                     Cost: ~$80-175/mo
+Cost: ~$15-150/mo                     Cost: ~$65-175/mo
+
+⭐ ONE BAA covers ALL Google services!
 ```
 
-### Why This Migration Path?
+### Why All-Google Cloud?
 
-| Service | Why Chosen |
-|---------|------------|
-| Google Cloud Run | Easy like Railway, BAA included |
-| Google Cloud SQL | Managed PostgreSQL, BAA included |
-| AWS S3 | Best for media, well-documented HIPAA |
-| Azure OpenAI | GPT-4 with BAA, no data retention |
-| Vercel Enterprise | Easy deploys, BAA available |
+| Benefit | Description |
+|---------|-------------|
+| **One BAA** | Sign once, covers Cloud Run, Cloud SQL, Cloud Storage, Firebase, Vertex AI |
+| **One Invoice** | Single bill, single dashboard for everything |
+| **One Support** | One place to get help when issues arise |
+| **Easy Setup** | Cloud Run feels like Railway (push-to-deploy) |
+| **Same Database** | Cloud SQL = PostgreSQL (same as current stack) |
+| **Integrated** | All services work together seamlessly |
+| **Simpler Migration** | Less vendors to manage = fewer BAAs = less complexity |
+
+### Why NOT Multi-Cloud (AWS + Azure + Google)?
+
+| Factor | Multi-Cloud | All-Google |
+|--------|-------------|------------|
+| BAAs to sign | 3-4 BAAs | 1-2 BAAs |
+| Invoices | Multiple bills | One bill |
+| Support contacts | Multiple vendors | One vendor |
+| Learning curve | 3 different consoles | One console |
+| Integration complexity | High | Low |
 
 ### Key HIPAA Requirements
 
-| Requirement | Current Stack | HIPAA Stack |
-|-------------|---------------|-------------|
-| BAAs with all vendors | ❌ | ✅ |
-| Encryption at rest | ✅ | ✅ |
-| Encryption in transit | ✅ | ✅ |
-| Audit logging | ❌ Need to add | ✅ |
-| Access controls (RBAC) | ✅ | ✅ |
+| Requirement | Current Stack | HIPAA Stack (Google) |
+|-------------|---------------|----------------------|
+| BAAs with all vendors | ❌ | ✅ One BAA |
+| Encryption at rest | ✅ | ✅ Automatic |
+| Encryption in transit | ✅ | ✅ Automatic |
+| Audit logging | ❌ Need to add | ✅ Cloud Audit Logs |
+| Access controls (RBAC) | ✅ | ✅ IAM + Django |
 | Session timeouts | ❌ Need to add | ✅ |
+
+### Quick Migration Steps
+
+```
+1. Create Google Cloud account
+2. Go to IAM & Admin → Settings → Accept BAA ✅
+3. Deploy backend to Cloud Run
+4. Migrate database to Cloud SQL
+5. Migrate media to Cloud Storage
+6. Deploy frontend to Firebase Hosting
+7. (Optional) Switch AI to Vertex AI
+8. Upgrade SendGrid to Enterprise + sign BAA
+```
 
 **📋 See [HIPAA_COMPLIANCE.md](./HIPAA_COMPLIANCE.md) for full compliance guide.**
