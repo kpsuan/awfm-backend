@@ -27,9 +27,14 @@ INSTALLED_APPS = [
     # Third party
     'rest_framework',
     'corsheaders',
+    'cloudinary_storage',
+    'cloudinary',
     # Local
     'questionnaire',
 ]
+
+# Custom User Model
+AUTH_USER_MODEL = 'questionnaire.User'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -113,3 +118,14 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 100,
 }
+
+# Cloudinary settings
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME', ''),
+    'API_KEY': os.environ.get('CLOUDINARY_API_KEY', ''),
+    'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET', ''),
+}
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
+# Media files
+MEDIA_URL = '/media/'
