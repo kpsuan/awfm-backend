@@ -460,3 +460,50 @@ Cloudinary Free     →      Cloudinary Plus       →   AWS S3 + MediaConvert
 ```
 
 The current stack allows easy migration without major rewrites.
+
+---
+
+## HIPAA Compliance Path
+
+Since AWFM handles Protected Health Information (PHI), here's the migration path to HIPAA compliance:
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                    MVP → HIPAA-COMPLIANT                                     │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+CURRENT (MVP)                         HIPAA-COMPLIANT
+─────────────                         ───────────────
+
+Netlify (no BAA)              →       Vercel Enterprise (BAA)
+Railway (no BAA)              →       Google Cloud Run (BAA)
+Railway Postgres              →       Google Cloud SQL (BAA)
+Cloudinary (BAA unclear)      →       AWS S3 (BAA)
+OpenAI (no BAA standard)      →       Azure OpenAI (BAA)
+SendGrid Free                 →       SendGrid Enterprise (BAA)
+
+Cost: ~$15-150/mo                     Cost: ~$80-175/mo
+```
+
+### Why This Migration Path?
+
+| Service | Why Chosen |
+|---------|------------|
+| Google Cloud Run | Easy like Railway, BAA included |
+| Google Cloud SQL | Managed PostgreSQL, BAA included |
+| AWS S3 | Best for media, well-documented HIPAA |
+| Azure OpenAI | GPT-4 with BAA, no data retention |
+| Vercel Enterprise | Easy deploys, BAA available |
+
+### Key HIPAA Requirements
+
+| Requirement | Current Stack | HIPAA Stack |
+|-------------|---------------|-------------|
+| BAAs with all vendors | ❌ | ✅ |
+| Encryption at rest | ✅ | ✅ |
+| Encryption in transit | ✅ | ✅ |
+| Audit logging | ❌ Need to add | ✅ |
+| Access controls (RBAC) | ✅ | ✅ |
+| Session timeouts | ❌ Need to add | ✅ |
+
+**📋 See [HIPAA_COMPLIANCE.md](./HIPAA_COMPLIANCE.md) for full compliance guide.**
